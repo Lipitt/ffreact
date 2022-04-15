@@ -6,6 +6,7 @@ import "./App.css";
 
 function App() {
   //state variables to store response data from API
+  const [dataApiAll, setDataApiAll] = useState([]);
   const [assetsData, setAssetsData] = useState("");
   const [accountsData, setAccountsData] = useState("");
   const [customersData, setCustomersData] = useState("");
@@ -31,8 +32,9 @@ function App() {
   //fetching data from api everytime requestTimeout is true, which is set to by the timer function
   useEffect(() => {
     if (requestTimeout) {
-      fetchDataFromAPI();
-      timer();
+      fetchTest();
+      //fetchDataFromAPI();
+      //timer();
     }
     setRequestTimeout(false);
   }, [requestTimeout]);
@@ -45,6 +47,34 @@ function App() {
     setTimeout(() => {
       setRequestTimeout(true);
     }, timerInterval);
+  };
+
+  const fetchTest = () => {
+    const setEndpoint = (endpoint) => {
+      return `https://api.factoryfour.com/${endpoint}/health/status`;
+    };
+    // const accountsRes = axios.get(setEndpoint("users"));
+    // const assetsRes = axios.get(setEndpoint("assets"));
+
+    const accountsRes = axios.get(setEndpoint("accounts"));
+    const assetsRes = axios.get(setEndpoint("assets"));
+
+    // accountsRes.then(console.log("hola then")).catch((err) => console.log(err));
+
+    // Promise.allSettled([accountsRes, assetsRes])
+    //   .then(
+    //     axios.spread((...allData) => {
+    //       console.log(allData);
+    //       console.log(allData[0]);
+    //       setAccountsData(allData[0]);
+    //       setAssetsData(allData[1]);
+    //     })
+    //   )
+    //   .catch((err) => console.log(err));
+
+    Promise.allSettled([accountsRes, assetsRes])
+      .then((dataaa) => setDataApiAll(dataaa))
+      .catch((err) => console.log(err));
   };
 
   //main function
@@ -73,6 +103,7 @@ function App() {
     const templatesRes = axios.get(setEndpoint("templates"));
     const usersRes = axios.get(setEndpoint("users"));
     const workflowsRes = axios.get(setEndpoint("workflows"));
+    const test = axios.get("https://api.github.com/users/lipitt");
 
     //a combination of promise.allsettled and axios.spread to set the data in the corresponding vars
     Promise.allSettled([
@@ -94,6 +125,7 @@ function App() {
       templatesRes,
       usersRes,
       workflowsRes,
+      test,
     ])
       .then(
         axios.spread((...allData) => {
@@ -117,13 +149,17 @@ function App() {
           setWorkflowsData(allData[17]);
         })
       )
-      .catch((err) => console.log(err));
+      .catch((err) => console.log("holisss"));
   };
 
   return (
     <div className="App">
       {/* passing the stored api data as props */}
-      <StatusMonitor name="ACCOUNTS" apiData={accountsData} />
+
+      {dataApiAll.map((item) => {
+        return <StatusMonitor apiData={item} />;
+      })}
+      {/* <StatusMonitor name="ACCOUNTS" apiData={accountsData} />
       <StatusMonitor name="ASSETS" apiData={assetsData} />
       <StatusMonitor name="CUSTOMERS" apiData={customersData} />
       <StatusMonitor name="DATAPOINTS" apiData={datapointsData} />
@@ -140,7 +176,7 @@ function App() {
       <StatusMonitor name="RULES" apiData={rulesData} />
       <StatusMonitor name="TEMPLATES" apiData={templatesData} />
       <StatusMonitor name="USERS" apiData={usersData} />
-      <StatusMonitor name="WORKFLOWS" apiData={workflowsData} />
+      <StatusMonitor name="WORKFLOWS" apiData={workflowsData} /> */}
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import React from "react";
 import { StyledStatusMonitor } from "./styles/StatusMonitor.styled";
 
-const StatusMonitor = ({ name, apiData }) => {
+const StatusMonitor = ({ apiData }) => {
+  console.log(apiData);
   const convertTime = (timeToConvert) => {
     const timeStamp = new Date(timeToConvert);
     const time = timeStamp.toLocaleTimeString("es-AR", { hour12: false });
@@ -10,7 +11,7 @@ const StatusMonitor = ({ name, apiData }) => {
 
   return (
     <StyledStatusMonitor>
-      <h2>{name}</h2>
+      <h2>nombre</h2>
       {apiData.status === "fulfilled" ? (
         <>
           <h2>Healty</h2>
@@ -20,7 +21,7 @@ const StatusMonitor = ({ name, apiData }) => {
       ) : (
         <>
           <h2>Error</h2>
-          <p>403: Forbidden</p>
+          <p>{apiData.status}</p>
         </>
       )}
     </StyledStatusMonitor>
